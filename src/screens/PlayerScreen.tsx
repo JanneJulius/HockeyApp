@@ -1,89 +1,93 @@
 import {
   StyleSheet,
-  ScrollView,
   View,
-  Text,
-  Animated,
+  ScrollView,
   Image,
-  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { showTabBar, hideTabBar } from "../reducers/actions";
-import { fetchPlayerSpotlight } from "../services/nhlAPI";
-import { setPlayerSpotlight } from "../reducers/actions";
-import TeamLogo from "../components/TeamLogo";
+import { fetchPlayerDetails, fetchPlayerBio } from "../services/nhlAPI";
+import theme from "../theme";
+import { AntDesign } from "@expo/vector-icons";
+import PlayerInfo from "../components/PlayerInfo";
+import StatInfo from "../components/StatInfo";
+import BasicInfo from "../components/BasicInfo";
+import BioInfo from "../components/BioInfo";
 
 const styles = StyleSheet.create({
-  a: {
-    backgroundColor: "white",
-  },
-
-  searchInput: {
-    height: 40, // Specify the height of the input
-    margin: 12,
-    marginTop: 70, // Add some margin around the input
-    borderWidth: 1, // Set the border width
-    padding: 10, // Add some padding inside the input
-    borderRadius: 20, // Optional: if you want rounded corners
-    borderColor: "#ddd", // Specify the border color
-    backgroundColor: "white", // Set the background color of the input
-    fontSize: 16, // Set the font size
-  },
-  playerContainer: {
+  container: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    paddingBottom: 270,
+    paddingTop: 50,
   },
-  tinyLogo: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: "black",
+  imagesContainer: {
+    position: "relative",
   },
-  name: {
-    paddingTop: 10,
-    fontSize: 30,
+  backgroundImage: {
+    width: "100%",
+    aspectRatio: 16 / 9,
   },
-  bottomContainer: {
-    display: "flex",
-    borderWidth: 2,
-    borderColor: "black",
-    margin: 0,
+  faceImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    position: "absolute",
+    left: "50%",
+    marginLeft: -50,
+    top: "50%",
+    marginTop: 60,
+    borderColor: "white",
+    borderWidth: 1,
   },
-  logoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+  backButton: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+  },
+
+  centering: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
 });
 
-const PlayerScreen = () => {
+const PlayerScreen: React.FC = ({ route, navigation }) => {
+  const { playerId } = route.params;
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
   const [lastY, setLastY] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const playerSpotlight = useSelector((state) => state.playerSpotlight);
+  const [detailObject, setDetailObject] = useState(null);
+  const [playerBio, setPlayerBio] = useState(null);
+
+  const goToPlayers = () => {
+    navigation.navigate("PlayersScreen");
+  };
 
   useEffect(() => {
     // Define an async function inside the effect
-    const loadPlayerSpotlight = async () => {
+    const loadPlayerDetails = async () => {
       try {
-        // Await the fetchPlayerSpotlight function and dispatch the result
-        const players = await fetchPlayerSpotlight();
-        //console.log(players);
-        dispatch(setPlayerSpotlight(players));
+        const data = await fetchPlayerDetails(playerId);
+        const bio = await fetchPlayerBio(playerId);
+        setDetailObject(data);
+        setPlayerBio(bio);
       } catch (error) {
         console.error("Failed to fetch player spotlight:", error);
       }
     };
     // Call the async function
-    loadPlayerSpotlight();
+    loadPlayerDetails();
   }, []);
 
-  const handleScroll = (event) => {
+  //console.log(detailObject);
+
+  const handleScroll = (event: any) => {
     // Extract the values you need from the event immediately
     const currentY = event.nativeEvent.contentOffset?.y;
     const contentHeight = event.nativeEvent.contentSize.height;
@@ -103,45 +107,48 @@ const PlayerScreen = () => {
     setLastY(currentY);
   };
 
-  //    contentContainerStyle
+  // Still loading, show a spinner
+  if (!detailObject || !playerBio) {
+    return (
+      <View style={styles.centering}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  const subSeason = detailObject?.featuredStats?.regularSeason?.subSeason;
+  const career = detailObject?.featuredStats?.regularSeason?.career;
+  const bio = playerBio?.items[0]?.fields?.biography;
 
   return (
-    <>
-      <TextInput
-        style={styles.searchInput}
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        placeholder="Search for a player"
-        clearButtonMode="while-editing" // iOS only - shows a clear button in the input field
-      />
-      <Animated.ScrollView
-        contentContainerStyle={styles.a}
-        ref={scrollViewRef}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-      >
-        {playerSpotlight.players &&
-          playerSpotlight.players.map((player) => (
-            <View key={player.playerId} style={styles.playerContainer}>
-              <Image
-                style={styles.tinyLogo}
-                source={{
-                  uri: player.headshot,
-                }}
-              />
-              <View style={styles.bottomContainer}>
-                <Text style={styles.name}>{player.name.default}</Text>
-                <View style={styles.logoRow}>
-                  <TeamLogo url={player.teamLogo} size={50} />
-                  <Text style={styles.name}>#{player.sweaterNumber}</Text>
-                  <Text style={styles.name}>{player.position}</Text>
-                </View>
-              </View>
-            </View>
-          ))}
-      </Animated.ScrollView>
-    </>
+    <ScrollView
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.container}
+    >
+      <View style={styles.imagesContainer}>
+        <Image
+          source={{ uri: detailObject.heroImage }}
+          resizeMode="contain"
+          style={styles.backgroundImage}
+        />
+        <TouchableOpacity style={styles.backButton} onPress={goToPlayers}>
+          <AntDesign name="back" size={40} color={theme.colors.barColor} />
+        </TouchableOpacity>
+        <Image
+          source={{ uri: detailObject.headshot }}
+          style={styles.faceImage}
+        />
+      </View>
+
+      <BasicInfo detailObject={detailObject} />
+      <StatInfo period="2023-2024 Season" periodData={subSeason} />
+      <StatInfo period="Career" periodData={career} />
+      <PlayerInfo detailObject={detailObject} />
+      <BioInfo bio={bio} />
+    </ScrollView>
   );
 };
 

@@ -3,6 +3,8 @@ import React, { useRef, useState } from "react";
 import TabBarComponent from "./TabBarComponent";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
+import theme from "../theme";
+import { State } from "../types/types";
 
 const ICON_SIZE = 42;
 
@@ -11,7 +13,7 @@ const tabBarWidth = screenWidth - 40;
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    backgroundColor: "#A8ADB1",
+    backgroundColor: theme.colors.barColor,
     flexDirection: "row",
     position: "absolute",
     alignItems: "center",
@@ -22,9 +24,8 @@ const styles = StyleSheet.create({
     right: 20,
     height: 70,
     flex: 1,
-    elevation: 0,
     borderRadius: 15,
-    shadowColor: "#000000",
+    shadowColor: theme.colors.shadowColor,
     shadowOpacity: 0.05,
     shadowOffset: {
       width: 10,
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 });
 
 const TabBar = ({ state, navigation, descriptors }: BottomTabBarProps) => {
-  const isVisible = useSelector((state) => state.tabBar.isVisible);
+  const isVisible = useSelector((state: State) => state.tabBar.isVisible);
 
   const tabBarVisibilityStyle = {
     display: isVisible ? "flex" : "none",

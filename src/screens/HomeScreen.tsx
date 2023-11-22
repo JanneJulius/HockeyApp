@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, View, Text, Animated } from "react-native";
+import { StyleSheet, Animated, ActivityIndicator } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showTabBar, hideTabBar } from "../reducers/actions";
@@ -6,8 +6,23 @@ import { fetchTeamLogos } from "../services/nhlAPI";
 import { setTeamLogos } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
 
-const splitArrayIntoChunks = (array, baseChunkSize) => {
-  const result = [];
+import { Logo, Index, LogoArray, State } from "../types/types";
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+  },
+  logoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+});
+
+function splitArrayIntoChunks<T>(array: T[], baseChunkSize: number): T[][] {
+  const result: T[][] = [];
   let increment = 0;
   let counter = 0;
 
@@ -26,26 +41,13 @@ const splitArrayIntoChunks = (array, baseChunkSize) => {
   }
 
   return result;
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 20,
-  },
-  logoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-});
-
-const HomeScreen = () => {
+const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
   const [lastY, setLastY] = useState(0);
-  const teamLogos = useSelector((state) => state.teamLogos.logos);
+  const teamLogos = useSelector((state: State) => state.teamLogos.logos);
   const logoArrays = splitArrayIntoChunks(teamLogos, 4);
   const animatedLastY = new Animated.Value(lastY);
 
@@ -64,7 +66,7 @@ const HomeScreen = () => {
     loadLogos();
   }, []);
 
-  const handleScroll = (event) => {
+  const handleScroll = (event: any) => {
     // Extract the values you need from the event immediately
     const currentY = event.nativeEvent.contentOffset?.y;
     const contentHeight = event.nativeEvent.contentSize.height;
@@ -93,7 +95,7 @@ const HomeScreen = () => {
   );
 
   // This function will render a single row of logos
-  const renderLogosRow = (logoArray, index) => {
+  const renderLogosRow = (logoArray: LogoArray, index: Index): JSX.Element => {
     let outputRange;
     switch (index % 3) {
       case 0: // Indices 0, 3, 6, ...
@@ -118,8 +120,8 @@ const HomeScreen = () => {
         key={index}
         style={[styles.logoRow, { transform: [{ translateX: rowAnimation }] }]}
       >
-        {logoArray.map((logo, idx) => (
-          <TeamLogo key={idx} url={logo} size={300} />
+        {logoArray.map((logo: Logo, logoIndex: Index) => (
+          <TeamLogo key={logoIndex} url={logo} size={300} />
         ))}
       </Animated.View>
     );
@@ -133,8 +135,7 @@ const HomeScreen = () => {
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
     >
-      {logoArrays &&
-        logoArrays.map((logoArray, index) => renderLogosRow(logoArray, index))}
+      {logoArrays.map((logoArray, index) => renderLogosRow(logoArray, index))}
     </Animated.ScrollView>
   );
 };

@@ -4,7 +4,7 @@ const initialState = {
   players: []
 };
 
-const playerSpotlightReducer = (state = initialState, action) => {
+const playerSpotlightReducer = (state = initialState, action: any) => {
 
   switch (action.type) {
     case SET_PLAYER_SPOTLIGHT:

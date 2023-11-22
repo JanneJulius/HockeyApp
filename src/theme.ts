@@ -2,13 +2,16 @@ const theme = {
   colors: {
     textPrimary: "black",
     textSecondary: "white",
-    barColor: "#24292e",
-    backgroundColor: "#e1e4e8",
+    backgroundPrimary: "white",
+    backgroundSecondary: "black",
+    barColor: "#A8ADB1",
+    shadowColor: "#171717",
+    borderColor: "#ddd",
   },
   fontSizes: {
-    body: 14,
-    subheading: 16,
-    heading: 24,
+    body: 16,
+    subheading: 22,
+    heading: 30,
   },
   fonts: {
     main: "System",

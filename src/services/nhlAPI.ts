@@ -19,3 +19,36 @@ export const fetchPlayerSpotlight = async () => {
     return [];
   }
 };
+
+export const searchPlayers = async (word) => {
+  try {
+    const response = await fetch(`https://search.d3.nhle.com/api/v1/search/player?culture=en-us&limit=20&q=${word}%2A&active=true`)
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const fetchPlayerDetails = async (playerId) => {
+  try {
+    const response = await fetch(`https://api-web.nhle.com/v1/player/${playerId}/landing`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+export const fetchPlayerBio = async (playerId) => {
+  try {
+    const response = await fetch(`https://forge-dapi.d3.nhle.com/v2/content/en-US/players?tags.slug=playerid-${playerId}`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
