@@ -1,6 +1,5 @@
 import {
   StyleSheet,
-  ScrollView,
   View,
   Text,
   Animated,
@@ -13,35 +12,41 @@ import { showTabBar, hideTabBar } from "../reducers/actions";
 import { fetchPlayerSpotlight } from "../services/nhlAPI";
 import { setPlayerSpotlight } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
+import { State } from "../types/types";
+import theme from "../theme";
 
 const styles = StyleSheet.create({
-  a: {
-    backgroundColor: "white",
-  },
-
   searchInput: {
-    height: 40, // Specify the height of the input
+    height: 40,
     margin: 12,
-    marginTop: 70, // Add some margin around the input
-    borderWidth: 1, // Set the border width
-    padding: 10, // Add some padding inside the input
-    borderRadius: 20, // Optional: if you want rounded corners
-    borderColor: "#ddd", // Specify the border color
-    backgroundColor: "white", // Set the background color of the input
-    fontSize: 16, // Set the font size
+    marginTop: 70,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 20,
+    borderColor: theme.colors.borderColor,
+    backgroundColor: theme.colors.backgroundPrimary,
+    fontSize: 16,
   },
   playerContainer: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
-  tinyLogo: {
+  headShotContainer: {
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: "black",
+    backgroundColor: theme.colors.backgroundPrimary,
+    shadowColor: theme.colors.shadowColor,
+    shadowOffset: { width: -2, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    margin: 10,
+  },
+  headShot: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 75,
   },
   name: {
     paddingTop: 10,
@@ -65,7 +70,7 @@ const PlayerScreen = () => {
   const scrollViewRef = useRef(null);
   const [lastY, setLastY] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const playerSpotlight = useSelector((state) => state.playerSpotlight);
+  const playerSpotlight = useSelector((state: State) => state.playerSpotlight);
 
   useEffect(() => {
     // Define an async function inside the effect
@@ -83,7 +88,7 @@ const PlayerScreen = () => {
     loadPlayerSpotlight();
   }, []);
 
-  const handleScroll = (event) => {
+  const handleScroll = (event: any) => {
     // Extract the values you need from the event immediately
     const currentY = event.nativeEvent.contentOffset?.y;
     const contentHeight = event.nativeEvent.contentSize.height;
@@ -103,19 +108,16 @@ const PlayerScreen = () => {
     setLastY(currentY);
   };
 
-  //    contentContainerStyle
-
   return (
-    <>
+    <View>
       <TextInput
         style={styles.searchInput}
         onChangeText={setSearchQuery}
         value={searchQuery}
         placeholder="Search for a player"
-        clearButtonMode="while-editing" // iOS only - shows a clear button in the input field
+        clearButtonMode="while-editing"
       />
       <Animated.ScrollView
-        contentContainerStyle={styles.a}
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -124,12 +126,14 @@ const PlayerScreen = () => {
         {playerSpotlight.players &&
           playerSpotlight.players.map((player) => (
             <View key={player.playerId} style={styles.playerContainer}>
-              <Image
-                style={styles.tinyLogo}
-                source={{
-                  uri: player.headshot,
-                }}
-              />
+              <View style={styles.headShotContainer}>
+                <Image
+                  style={styles.headShot}
+                  source={{
+                    uri: player.headshot,
+                  }}
+                />
+              </View>
               <View style={styles.bottomContainer}>
                 <Text style={styles.name}>{player.name.default}</Text>
                 <View style={styles.logoRow}>
@@ -141,7 +145,7 @@ const PlayerScreen = () => {
             </View>
           ))}
       </Animated.ScrollView>
-    </>
+    </View>
   );
 };
 

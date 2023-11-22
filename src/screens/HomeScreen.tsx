@@ -6,7 +6,7 @@ import { fetchTeamLogos } from "../services/nhlAPI";
 import { setTeamLogos } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
 
-import { Logo, Index, LogoArray, TeamLogoProps, State } from "../types/types";
+import { Logo, Index, LogoArray, State } from "../types/types";
 
 const styles = StyleSheet.create({
   container: {
