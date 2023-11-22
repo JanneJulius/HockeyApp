@@ -23,3 +23,5 @@ export interface State {
     players: string[];
   };
 }
+
+export type FontWeight = '400' | '700' | 'normal' | 'bold' | '100' | '200' | '300' | '500' | '600' | '800' | '900';

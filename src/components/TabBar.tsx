@@ -4,6 +4,7 @@ import TabBarComponent from "./TabBarComponent";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import theme from "../theme";
+import { State } from "../types/types";
 
 const ICON_SIZE = 42;
 
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
 });
 
 const TabBar = ({ state, navigation, descriptors }: BottomTabBarProps) => {
-  const isVisible = useSelector((state) => state.tabBar.isVisible);
+  const isVisible = useSelector((state: State) => state.tabBar.isVisible);
 
   const tabBarVisibilityStyle = {
     display: isVisible ? "flex" : "none",

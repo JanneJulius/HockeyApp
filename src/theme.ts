@@ -9,9 +9,9 @@ const theme = {
     borderColor: "#ddd",
   },
   fontSizes: {
-    body: 14,
-    subheading: 16,
-    heading: 24,
+    body: 16,
+    subheading: 22,
+    heading: 30,
   },
   fonts: {
     main: "System",

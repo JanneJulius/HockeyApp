@@ -13,6 +13,7 @@ import {
 } from "@react-navigation/native";
 import { BottomTabNavigationEventMap } from "@react-navigation/bottom-tabs";
 import { AntDesign } from "@expo/vector-icons";
+import theme from "../theme";
 
 export const routes = {
   home: { name: "Home", icon: "home" },
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
   container: {
     width: 90,
     height: 40,
-    backgroundColor: "#111111",
+    backgroundColor: theme.colors.backgroundSecondary,
     zIndex: 0,
     position: "absolute",
     marginHorizontal: 20,
