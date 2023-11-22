@@ -12,7 +12,7 @@ import { showTabBar, hideTabBar } from "../reducers/actions";
 import { fetchPlayerSpotlight } from "../services/nhlAPI";
 import { setPlayerSpotlight } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
-import { State } from "../types/types";
+import { State, Player } from "../types/types";
 import theme from "../theme";
 import Text from "../components/Text";
 
@@ -65,7 +65,7 @@ const PlayersScreen: React.FC = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const playerSpotlight = useSelector((state: State) => state.playerSpotlight);
 
-  const goToPlayerDetail = (playerId) => {
+  const goToPlayer = (playerId: string) => {
     navigation.navigate("PlayerScreen", { playerId: playerId });
   };
 
@@ -122,10 +122,10 @@ const PlayersScreen: React.FC = ({ navigation }) => {
         contentContainerStyle={{ paddingBottom: 270 }}
       >
         {playerSpotlight.players &&
-          playerSpotlight.players.map((player) => (
+          playerSpotlight.players.map((player: Player) => (
             <TouchableOpacity
               key={player.playerId}
-              onPress={() => goToPlayerDetail(player.playerId)}
+              onPress={() => goToPlayer(player.playerId)}
             >
               <View key={player.playerId} style={styles.playerContainer}>
                 <View style={styles.headShotContainer}>

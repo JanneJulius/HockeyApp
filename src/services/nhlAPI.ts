@@ -19,3 +19,14 @@ export const fetchPlayerSpotlight = async () => {
     return [];
   }
 };
+
+export const fetchPlayerDetails = async (playerId) => {
+  try {
+    const response = await fetch(`https://api-web.nhle.com/v1/player/${playerId}/landing`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
