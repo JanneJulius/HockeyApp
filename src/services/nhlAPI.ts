@@ -20,6 +20,17 @@ export const fetchPlayerSpotlight = async () => {
   }
 };
 
+export const searchPlayers = async (word) => {
+  try {
+    const response = await fetch(`https://search.d3.nhle.com/api/v1/search/player?culture=en-us&limit=20&q=${word}%2A&active=true`)
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
 export const fetchPlayerDetails = async (playerId) => {
   try {
     const response = await fetch(`https://api-web.nhle.com/v1/player/${playerId}/landing`);

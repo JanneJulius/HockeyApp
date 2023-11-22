@@ -1,24 +1,23 @@
 import {
   StyleSheet,
   View,
-  Animated,
+  ScrollView,
   Image,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showTabBar, hideTabBar } from "../reducers/actions";
-import { fetchPlayerSpotlight } from "../services/nhlAPI";
+import { fetchPlayerSpotlight, searchPlayers } from "../services/nhlAPI";
 import { setPlayerSpotlight } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
 import { State, Player } from "../types/types";
 import theme from "../theme";
 import Text from "../components/Text";
+import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 
 const styles = StyleSheet.create({
   searchInput: {
-    height: 40,
     margin: 12,
     marginTop: 70,
     borderWidth: 1,
@@ -62,10 +61,12 @@ const PlayersScreen: React.FC = ({ navigation }) => {
   const dispatch = useDispatch();
   const scrollViewRef = useRef(null);
   const [lastY, setLastY] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
   const playerSpotlight = useSelector((state: State) => state.playerSpotlight);
+  const [playerList, setPlayerList] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const goToPlayer = (playerId: string) => {
+    setPlayerList(null);
     navigation.navigate("PlayerScreen", { playerId: playerId });
   };
 
@@ -105,16 +106,50 @@ const PlayersScreen: React.FC = ({ navigation }) => {
     setLastY(currentY);
   };
 
+  const getSuggestions = useCallback(async (q) => {
+    const filterToken = q.toLowerCase();
+    console.log("getSuggestions", q);
+    if (typeof q !== "string" || q.length < 3) {
+      setPlayerList(null);
+      return;
+    }
+    setLoading(true);
+    const response = await searchPlayers(q);
+    //const items = await response.json();
+    const suggestions = response
+      .filter((item) => item.name.toLowerCase().includes(filterToken))
+      .map((item) => ({
+        id: item.playerId,
+        title: item.name,
+      }));
+    setPlayerList(suggestions);
+    setLoading(false);
+  }, []);
+
+  const onClearPress = useCallback(() => {
+    setPlayerList(null);
+  }, []);
+
+  const onOpenSuggestionsList = useCallback((isOpened) => {}, []);
+
   return (
     <View>
-      <TextInput
-        style={styles.searchInput}
-        onChangeText={setSearchQuery}
-        value={searchQuery}
-        placeholder="Search for a player"
-        clearButtonMode="while-editing"
+      <AutocompleteDropdown
+        containerStyle={styles.searchInput}
+        clearOnFocus={true}
+        closeOnBlur={true}
+        debounce={300}
+        loading={loading}
+        onChangeText={getSuggestions}
+        dataSet={playerList}
+        onOpenSuggestionsList={onOpenSuggestionsList}
+        onClear={onClearPress}
+        onSelectItem={(item) => {
+          item && goToPlayer(item.id);
+        }}
       />
-      <Animated.ScrollView
+
+      <ScrollView
         ref={scrollViewRef}
         onScroll={handleScroll}
         scrollEventThrottle={16}
@@ -155,7 +190,7 @@ const PlayersScreen: React.FC = ({ navigation }) => {
               </View>
             </TouchableOpacity>
           ))}
-      </Animated.ScrollView>
+      </ScrollView>
     </View>
   );
 };
