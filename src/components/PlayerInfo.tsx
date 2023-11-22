@@ -1,14 +1,11 @@
-import { StyleSheet, View, Image, Dimensions, Animated } from "react-native";
-import React, { useRef, useState } from "react";
-import TabBarComponent from "./TabBarComponent";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useSelector } from "react-redux";
-import theme from "../theme";
-import { State } from "../types/types";
+import { StyleSheet, View } from "react-native";
+import React from "react";
 import Text from "./Text";
 
 const styles = StyleSheet.create({
   otherInfoContainer: {
+    marginTop: 20,
+    marginLeft: 20,
     display: "flex",
     flexDirection: "column",
     alignSelf: "flex-start",
@@ -39,30 +36,32 @@ const PlayerInfo = ({ detailObject }) => {
         <Text fontSize="body" fontWeight="bold">
           Height:{" "}
         </Text>
-        <Text fontSize="body">{heightInFeet(detailObject.heightInInches)}</Text>
+        <Text fontSize="body">
+          {heightInFeet(detailObject?.heightInInches)}
+        </Text>
       </View>
       <View style={styles.otherInfoRow}>
         <Text fontSize="body" fontWeight="bold">
           Weight:{" "}
         </Text>
-        <Text fontSize="body">{detailObject.weightInPounds} lb</Text>
+        <Text fontSize="body">{detailObject?.weightInPounds} lb</Text>
       </View>
       <View style={styles.otherInfoRow}>
         <Text fontSize="body" fontWeight="bold">
           Born:{" "}
         </Text>
-        <Text fontSize="body">{detailObject.birthDate}</Text>
+        <Text fontSize="body">{detailObject?.birthDate}</Text>
       </View>
       <View style={styles.otherInfoRow}>
         <Text fontSize="body" fontWeight="bold">
           Birthplace:{" "}
         </Text>
         <Text fontSize="body">
-          {detailObject.birthCity?.default}
+          {detailObject?.birthCity?.default}
           {", "}
-          {detailObject.birthStateProvince?.default}
+          {detailObject?.birthStateProvince?.default}
           {", "}
-          {detailObject.birthCountry}
+          {detailObject?.birthCountry}
         </Text>
       </View>
 
@@ -70,23 +69,27 @@ const PlayerInfo = ({ detailObject }) => {
         <Text fontSize="body" fontWeight="bold">
           Shoots:{" "}
         </Text>
-        <Text fontSize="body">{detailObject.shootsCatches}</Text>
+        <Text fontSize="body">{detailObject?.shootsCatches}</Text>
       </View>
 
       <View style={styles.otherInfoRow}>
         <Text fontSize="body" fontWeight="bold">
           Draft:{" "}
         </Text>
-        <Text fontSize="body">
-          {detailObject.draftDetails.year}
-          {", "}
-          {detailObject.draftDetails.teamAbbrev}
-          {", "}
-          {getOrdinal(detailObject.draftDetails.round)}
-          {" round, "}
-          {getOrdinal(detailObject.draftDetails.pickInRound)}
-          {" pick"}
-        </Text>
+        {!detailObject.draftDetails ? (
+          <Text fontSize="body">Undrafted</Text>
+        ) : (
+          <Text fontSize="body">
+            {detailObject.draftDetails.year}
+            {", "}
+            {detailObject.draftDetails.teamAbbrev}
+            {", "}
+            {getOrdinal(detailObject.draftDetails.round)}
+            {" round, "}
+            {getOrdinal(detailObject.draftDetails.pickInRound)}
+            {" pick"}
+          </Text>
+        )}
       </View>
     </View>
   );

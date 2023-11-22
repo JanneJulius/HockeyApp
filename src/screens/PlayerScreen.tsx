@@ -9,14 +9,13 @@ import {
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { showTabBar, hideTabBar } from "../reducers/actions";
-import { fetchPlayerDetails } from "../services/nhlAPI";
-import TeamLogo from "../components/TeamLogo";
+import { fetchPlayerDetails, fetchPlayerBio } from "../services/nhlAPI";
 import theme from "../theme";
-import Text from "../components/Text";
 import { AntDesign } from "@expo/vector-icons";
 import PlayerInfo from "../components/PlayerInfo";
 import StatInfo from "../components/StatInfo";
 import BasicInfo from "../components/BasicInfo";
+import BioInfo from "../components/BioInfo";
 
 const styles = StyleSheet.create({
   container: {
@@ -64,6 +63,7 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
   const scrollViewRef = useRef(null);
   const [lastY, setLastY] = useState(0);
   const [detailObject, setDetailObject] = useState(null);
+  const [playerBio, setPlayerBio] = useState(null);
 
   const goToPlayers = () => {
     navigation.navigate("PlayersScreen");
@@ -74,7 +74,9 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
     const loadPlayerDetails = async () => {
       try {
         const data = await fetchPlayerDetails(playerId);
+        const bio = await fetchPlayerBio(playerId);
         setDetailObject(data);
+        setPlayerBio(bio);
       } catch (error) {
         console.error("Failed to fetch player spotlight:", error);
       }
@@ -106,7 +108,7 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
   };
 
   // Still loading, show a spinner
-  if (!detailObject) {
+  if (!detailObject || !playerBio) {
     return (
       <View style={styles.centering}>
         <ActivityIndicator size="large" />
@@ -114,8 +116,9 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
     );
   }
 
-  const subSeason = detailObject.featuredStats.regularSeason.subSeason;
-  const career = detailObject.featuredStats.regularSeason.career;
+  const subSeason = detailObject?.featuredStats?.regularSeason?.subSeason;
+  const career = detailObject?.featuredStats?.regularSeason?.career;
+  const bio = playerBio?.items[0]?.fields?.biography;
 
   return (
     <ScrollView
@@ -144,6 +147,7 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
       <StatInfo period="2023-2024 Season" periodData={subSeason} />
       <StatInfo period="Career" periodData={career} />
       <PlayerInfo detailObject={detailObject} />
+      <BioInfo bio={bio} />
     </ScrollView>
   );
 };

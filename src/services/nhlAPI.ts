@@ -30,3 +30,14 @@ export const fetchPlayerDetails = async (playerId) => {
     return [];
   }
 };
+
+export const fetchPlayerBio = async (playerId) => {
+  try {
+    const response = await fetch(`https://forge-dapi.d3.nhle.com/v2/content/en-US/players?tags.slug=playerid-${playerId}`);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
