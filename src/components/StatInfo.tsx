@@ -43,7 +43,7 @@ const StatInfo = ({ period, periodData }) => {
         <View style={styles.statBox}>
           <Text fontSize="body">GP</Text>
           <Text fontSize="body" fontWeight="bold">
-            {periodData.gamesPlayed || 0}
+            {periodData?.gamesPlayed ?? 0}
           </Text>
         </View>
         <View style={styles.statSeparator} />
@@ -51,7 +51,7 @@ const StatInfo = ({ period, periodData }) => {
         <View style={styles.statBox}>
           <Text fontSize="body">G</Text>
           <Text fontSize="body" fontWeight="bold">
-            {periodData.goals || 0}
+            {periodData?.goals ?? 0}
           </Text>
         </View>
         <View style={styles.statSeparator} />
@@ -59,7 +59,7 @@ const StatInfo = ({ period, periodData }) => {
         <View style={styles.statBox}>
           <Text fontSize="body">A</Text>
           <Text fontSize="body" fontWeight="bold">
-            {periodData.assists || 0}
+            {periodData?.assists ?? 0}
           </Text>
         </View>
         <View style={styles.statSeparator} />
@@ -67,7 +67,7 @@ const StatInfo = ({ period, periodData }) => {
         <View style={styles.statBox}>
           <Text fontSize="body">P</Text>
           <Text fontSize="body" fontWeight="bold">
-            {periodData.points || 0}
+            {periodData?.points ?? 0}
           </Text>
         </View>
         <View style={styles.statSeparator} />
@@ -75,7 +75,7 @@ const StatInfo = ({ period, periodData }) => {
         <View style={styles.statBox}>
           <Text fontSize="body">+/-</Text>
           <Text fontSize="body" fontWeight="bold">
-            {periodData.plusMinus || 0}
+            {periodData?.plusMinus ?? 0}
           </Text>
         </View>
       </View>
