@@ -10,7 +10,7 @@
 ## Usage 
 1. npm install
 2. npm start
-3. Choose favourite emulator. Verified with iOS simulator
+3. Choose favourite emulator. Best UX achieved with Expo Go app. Verified with iOS simulator and Expo Go on iPhone
 
 
 ## Screens
