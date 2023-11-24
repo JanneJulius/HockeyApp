@@ -116,8 +116,21 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
     );
   }
 
-  const subSeason = detailObject?.featuredStats?.regularSeason?.subSeason;
-  const career = detailObject?.featuredStats?.regularSeason?.career;
+  function formatSeason(season) {
+    const seasonStr = season.toString();
+
+    const startYear = seasonStr.substring(0, 4);
+    const endYear = seasonStr.substring(6);
+
+    return `${startYear}-${endYear} Season`;
+  }
+
+  const lastSubSeasonName = detailObject?.featuredStats?.season
+    ? formatSeason(detailObject?.featuredStats?.season)
+    : "Not known";
+
+  const subSeasonStats = detailObject?.featuredStats?.regularSeason?.subSeason;
+  const careerStats = detailObject?.featuredStats?.regularSeason?.career;
   const bio = playerBio?.items[0]?.fields?.biography;
 
   return (
@@ -133,6 +146,7 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
           source={{ uri: detailObject.heroImage }}
           resizeMode="contain"
           style={styles.backgroundImage}
+          alt="background image"
         />
         <TouchableOpacity style={styles.backButton} onPress={goToPlayers}>
           <AntDesign name="back" size={40} color={theme.colors.barColor} />
@@ -140,12 +154,13 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
         <Image
           source={{ uri: detailObject.headshot }}
           style={styles.faceImage}
+          alt="face image"
         />
       </View>
 
       <BasicInfo detailObject={detailObject} />
-      <StatInfo period="2023-2024 Season" periodData={subSeason} />
-      <StatInfo period="Career" periodData={career} />
+      <StatInfo period={lastSubSeasonName} periodData={subSeasonStats} />
+      <StatInfo period="Career" periodData={careerStats} />
       <PlayerInfo detailObject={detailObject} />
       <BioInfo bio={bio} />
     </ScrollView>

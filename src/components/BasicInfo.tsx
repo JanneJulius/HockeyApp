@@ -26,17 +26,17 @@ const BasicInfo = ({ detailObject }) => {
   return (
     <View style={styles.basicInfoContainer}>
       <Text fontSize="heading" fontWeight="bold" shadow={true}>
-        {detailObject.firstName.default} {detailObject.lastName.default}
+        {detailObject?.firstName?.default} {detailObject?.lastName?.default}
       </Text>
       <View style={styles.logoRow}>
-        <TeamLogo url={detailObject.teamLogo} size={50} />
+        <TeamLogo url={detailObject?.teamLogo} size={50} />
         <Text fontSize="heading" fontWeight="bold" shadow={true}>
-          #{detailObject.sweaterNumber}
+          #{detailObject?.sweaterNumber}
         </Text>
         <Text fontSize="heading" fontWeight="bold" shadow={true}>
-          {detailObject.position === "L" || detailObject.position === "R"
-            ? `${detailObject.position}W`
-            : detailObject.position}
+          {detailObject?.position === "L" || detailObject?.position === "R"
+            ? `${detailObject?.position}W`
+            : detailObject?.position}
         </Text>
       </View>
     </View>

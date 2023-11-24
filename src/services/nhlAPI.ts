@@ -42,6 +42,9 @@ export const fetchPlayerDetails = async (playerId) => {
   }
 };
 
+export const headShotUrl = (playerId) => `https://assets.nhle.com/mugs/nhl/latest/${playerId}.png`
+
+
 export const fetchPlayerBio = async (playerId) => {
   try {
     const response = await fetch(`https://forge-dapi.d3.nhle.com/v2/content/en-US/players?tags.slug=playerid-${playerId}`);
