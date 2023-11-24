@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useState, useRef } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 import { searchPlayers } from "../services/nhlAPI";
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
 
 export const SearchDropdown = memo(({ goToPlayer }) => {
   const [playerList, setPlayerList] = useState(null);
+  const searchRef = useRef(null);
 
   const getSuggestions = useCallback(async (q) => {
     const filterToken = q.toLowerCase();
@@ -54,17 +55,17 @@ export const SearchDropdown = memo(({ goToPlayer }) => {
   const onSelectItem = useCallback((item) => {
     if (item) {
       goToPlayer(item.id);
+      setPlayerList(null);
     }
-    setPlayerList(null);
   }, []);
 
   return (
     <AutocompleteDropdown
+      ref={searchRef}
       inputContainerStyle={styles.searchInputContainer}
       showClear={false}
       showChevron={false}
       clearOnFocus={true}
-      closeOnBlur={true}
       debounce={400}
       onChangeText={getSuggestions}
       useFilter={false}
