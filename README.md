@@ -26,3 +26,7 @@
 <p align="center">
   <img src="https://github.com/JanneJulius/HockeyApp/blob/main/images/Player Search.gif" width="300" />
 </p>
+<h3 align="center">Team standings</h3>
+<p align="center">
+  <img src="https://github.com/JanneJulius/HockeyApp/blob/main/images/Standings.gif" width="300" />
+</p>
