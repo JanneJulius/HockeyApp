@@ -22,6 +22,9 @@ export interface State {
   playerSpotlight: {
     players: Player[];
   };
+  standings: {
+    standings: Standings;
+  };
 }
 
 export interface Player {
@@ -37,6 +40,27 @@ export interface Player {
   teamTriCode: string;
   teamLogo: string;
   sortId: number;
+}
+
+export interface Standings {
+  atlantic: TeamObject[];
+  Metropolitan: TeamObject[];
+  Central: TeamObject[];
+  Pacific: TeamObject[];
+}
+
+export interface TeamObject {
+  name: string;
+  logo: string;
+  divison: string;
+  gamesPlayed: number;
+  wins: number;
+  losses: number;
+  overtimeLosses: number;
+  points: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifferential: number;
 }
 
 export type FontWeight = '400' | '700' | 'normal' | 'bold' | '100' | '200' | '300' | '500' | '600' | '800' | '900';

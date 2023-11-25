@@ -3,6 +3,8 @@ export const SHOW_TABBAR = 'SHOW_TABBAR';
 export const HIDE_TABBAR = 'HIDE_TABBAR';
 export const SET_TEAM_LOGOS = 'SET_TEAM_LOGOS';
 export const SET_PLAYER_SPOTLIGHT = 'SET_PLAYER_SPOTLIGHT';
+export const SET_STANDINGS = 'SET_STANDINGS';
+export const SORT_STANDINGS = 'SORT_STANDINGS';
 
 
 export const switchMode = (mode) => ({
@@ -29,5 +31,12 @@ export const setPlayerSpotlight = (players) => {
   return {
     type: SET_PLAYER_SPOTLIGHT,
     payload: players
+  };
+};
+
+export const setStandings = (standings) => {
+  return {
+    type: SET_STANDINGS,
+    payload: standings
   };
 };

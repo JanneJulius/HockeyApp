@@ -9,7 +9,6 @@ const playerSpotlightReducer = (state = initialState, action: any) => {
   switch (action.type) {
     case SET_PLAYER_SPOTLIGHT:
       console.log("Reducer action type:", action.type);
-
       return {
         ...state,
         players: action.payload
