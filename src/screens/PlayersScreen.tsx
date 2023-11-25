@@ -5,9 +5,8 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showTabBar, hideTabBar } from "../reducers/actions";
 import { fetchPlayerSpotlight } from "../services/nhlAPI";
 import { setPlayerSpotlight } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
@@ -15,6 +14,7 @@ import { State, Player } from "../types/types";
 import theme from "../theme";
 import Text from "../components/Text";
 import { SearchDropdown } from "../components/SearchDrodown";
+import { useTabBarVisibility } from "../hooks/useTabBarVisibility";
 
 const styles = StyleSheet.create({
   playerContainer: {
@@ -49,9 +49,8 @@ const styles = StyleSheet.create({
 
 const PlayersScreen: React.FC = ({ navigation }) => {
   const dispatch = useDispatch();
-  const scrollViewRef = useRef(null);
-  const [lastY, setLastY] = useState(0);
   const playerSpotlight = useSelector((state: State) => state.playerSpotlight);
+  const { handleScroll } = useTabBarVisibility();
 
   const goToPlayer = (playerId: string) => {
     navigation.navigate("PlayerScreen", { playerId: playerId });
@@ -73,33 +72,12 @@ const PlayersScreen: React.FC = ({ navigation }) => {
     loadPlayerSpotlight();
   }, []);
 
-  const handleScroll = (event: any) => {
-    // Extract the values you need from the event immediately
-    const currentY = event.nativeEvent.contentOffset?.y;
-    const contentHeight = event.nativeEvent.contentSize.height;
-    const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
-    const maxY = contentHeight - scrollViewHeight;
-
-    // Show the tab bar always on the top and bottom or if there is bounce effect.
-    if (currentY <= 0 || currentY >= maxY) {
-      dispatch(showTabBar());
-    } else {
-      if (currentY - lastY > 0) {
-        dispatch(hideTabBar());
-      } else {
-        dispatch(showTabBar());
-      }
-    }
-    setLastY(currentY);
-  };
-
   return (
     <View>
       <SearchDropdown goToPlayer={goToPlayer} />
       <ScrollView
-        ref={scrollViewRef}
         onScroll={handleScroll}
-        scrollEventThrottle={16}
+        scrollEventThrottle={100}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 270 }}
       >

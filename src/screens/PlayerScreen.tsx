@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { showTabBar, hideTabBar } from "../reducers/actions";
+import React, { useState, useEffect } from "react";
 import { fetchPlayerDetails, fetchPlayerBio } from "../services/nhlAPI";
 import theme from "../theme";
 import { AntDesign } from "@expo/vector-icons";
@@ -16,6 +14,7 @@ import PlayerInfo from "../components/PlayerInfo";
 import StatInfo from "../components/StatInfo";
 import BasicInfo from "../components/BasicInfo";
 import BioInfo from "../components/BioInfo";
+import { useTabBarVisibility } from "../hooks/useTabBarVisibility";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,11 +58,9 @@ const styles = StyleSheet.create({
 
 const PlayerScreen: React.FC = ({ route, navigation }) => {
   const { playerId } = route.params;
-  const dispatch = useDispatch();
-  const scrollViewRef = useRef(null);
-  const [lastY, setLastY] = useState(0);
   const [detailObject, setDetailObject] = useState(null);
   const [playerBio, setPlayerBio] = useState(null);
+  const { handleScroll } = useTabBarVisibility();
 
   const goToPlayers = () => {
     navigation.navigate("PlayersScreen");
@@ -84,28 +81,6 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
     // Call the async function
     loadPlayerDetails();
   }, []);
-
-  //console.log(detailObject);
-
-  const handleScroll = (event: any) => {
-    // Extract the values you need from the event immediately
-    const currentY = event.nativeEvent.contentOffset?.y;
-    const contentHeight = event.nativeEvent.contentSize.height;
-    const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
-    const maxY = contentHeight - scrollViewHeight;
-
-    // Show the tab bar always on the top and bottom or if there is bounce effect.
-    if (currentY <= 0 || currentY >= maxY) {
-      dispatch(showTabBar());
-    } else {
-      if (currentY - lastY > 0) {
-        dispatch(hideTabBar());
-      } else {
-        dispatch(showTabBar());
-      }
-    }
-    setLastY(currentY);
-  };
 
   // Still loading, show a spinner
   if (!detailObject || !playerBio) {
@@ -135,7 +110,6 @@ const PlayerScreen: React.FC = ({ route, navigation }) => {
 
   return (
     <ScrollView
-      ref={scrollViewRef}
       onScroll={handleScroll}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}

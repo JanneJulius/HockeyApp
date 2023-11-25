@@ -1,10 +1,10 @@
-import { StyleSheet, Animated, ActivityIndicator } from "react-native";
-import React, { useState, useEffect, useRef } from "react";
+import { StyleSheet, Animated } from "react-native";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { showTabBar, hideTabBar } from "../reducers/actions";
 import { fetchTeamLogos } from "../services/nhlAPI";
 import { setTeamLogos } from "../reducers/actions";
 import TeamLogo from "../components/TeamLogo";
+import { useTabBarVisibility } from "../hooks/useTabBarVisibility";
 
 import { Logo, Index, LogoArray, State } from "../types/types";
 
@@ -45,11 +45,10 @@ function splitArrayIntoChunks<T>(array: T[], baseChunkSize: number): T[][] {
 
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const scrollViewRef = useRef(null);
-  const [lastY, setLastY] = useState(0);
   const teamLogos = useSelector((state: State) => state.teamLogos.logos);
   const logoArrays = splitArrayIntoChunks(teamLogos, 4);
-  const animatedLastY = new Animated.Value(lastY);
+  const { handleScroll } = useTabBarVisibility();
+  const animatedLastY = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Define an async function inside the effect
@@ -66,31 +65,11 @@ const HomeScreen: React.FC = () => {
     loadLogos();
   }, []);
 
-  const handleScroll = (event: any) => {
-    // Extract the values you need from the event immediately
-    const currentY = event.nativeEvent.contentOffset?.y;
-    const contentHeight = event.nativeEvent.contentSize.height;
-    const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
-    const maxY = contentHeight - scrollViewHeight;
-
-    // Show the tab bar always on the top and bottom or if there is bounce effect.
-    if (currentY <= 0 || currentY >= maxY) {
-      dispatch(showTabBar());
-    } else {
-      if (currentY - lastY > 0) {
-        dispatch(hideTabBar());
-      } else {
-        dispatch(showTabBar());
-      }
-    }
-    setLastY(currentY);
-  };
-
   const animatedOnScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: animatedLastY } } }],
     {
       useNativeDriver: true,
-      listener: handleScroll,
+      listener: (event) => handleScroll(event),
     }
   );
 
@@ -130,12 +109,12 @@ const HomeScreen: React.FC = () => {
   return (
     <Animated.ScrollView
       contentContainerStyle={styles.container}
-      ref={scrollViewRef}
       onScroll={animatedOnScroll}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
     >
-      {logoArrays.map((logoArray, index) => renderLogosRow(logoArray, index))}
+      {logoArrays &&
+        logoArrays.map((logoArray, index) => renderLogosRow(logoArray, index))}
     </Animated.ScrollView>
   );
 };
